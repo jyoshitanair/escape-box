@@ -1,4 +1,7 @@
 #include "SevSeg.h"
+#include <Wire.h>
+#define SLAVE_ADDR 9 
+int sharedValue = 0 ;
 SevSeg sevseg; //Initiate a seven segment controller object
 //can not use 0 and 1 pins
 
@@ -12,8 +15,21 @@ void setup() {
     sevseg.begin(COMMON_CATHODE, numDigits, digitPins, segmentPins, resistorsOnSegments);
     sevseg.setBrightness(90);
     Serial.begin(9600);
+    //wire stuff
+    Wire.begin(SLAVE_ADDR);
+    Wire.onRequest(sendData);
+    Wire.onReceive(receiveData);
 }
 void loop() {
     sevseg.setNumber(3460, 4);
     sevseg.refreshDisplay(); // Must run repeatedly
+}
+//wire
+void sendData(){
+  Wire.write(sharedValue);
+}
+void receiveData(int bytes){
+  if (Wire.available()){
+    sharedValue = Wire.read();
+  }
 }
