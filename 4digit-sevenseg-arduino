@@ -1,9 +1,21 @@
 #include "SevSeg.h"
 SevSeg sevseg;
-int button1pin = A0;
-int button2pin = A1;
-static bool previous = HIGH;
-static bool current = HIGH;
+int button1pin = A1;
+int button2pin = A0;
+int button3pin = A5;
+int button4pin = A4;
+//button1
+static bool previous1 = HIGH;
+static bool current1 = HIGH;
+//button2
+static bool previous2 = HIGH;
+static bool current2 = HIGH;
+//button3
+static bool previous3 = HIGH;
+static bool current3 = HIGH;
+//button4
+static bool previous4 = HIGH;
+static bool current4 = HIGH;
  //Initiate a seven segment controller object
 //can not use 0 and 1 pins
 
@@ -11,6 +23,8 @@ void setup() {
     //buttons 
     pinMode(button1pin,INPUT_PULLUP);
     pinMode(button2pin,INPUT_PULLUP);
+    pinMode(button3pin,INPUT_PULLUP);
+    pinMode(button4pin,INPUT_PULLUP);
     Serial.begin(9600);
     byte numDigits = 4;  
     byte digitPins[] = {2, 3, 4, 5};
@@ -24,14 +38,41 @@ void setup() {
     Serial.begin(9600);
 }
 void loop() {
-    current = digitalRead(button1pin);
-    Serial.println(current);
-    if(current == LOW && previous == HIGH){
+    //button 1 
+    current1 = digitalRead(button1pin);
+    if(current1 == LOW && previous1 == HIGH){
       Serial.println("button1_on");
     }
-    if(current == HIGH && previous == LOW){+
+    if(current1 == HIGH && previous1 == LOW){
       Serial.println("button1_off");
     }
-    previous =current;
+    previous1 =current1;
+     //button 2 
+    current2 = digitalRead(button2pin);
+    if(current2 == LOW && previous2 == HIGH){
+      Serial.println("button2_on");
+    }
+    if(current2 == HIGH && previous2 == LOW){
+      Serial.println("button2_off");
+    }
+    previous2 =current2;
+     //button 3 
+    current3 = digitalRead(button3pin);
+    if(current3 == LOW && previous3 == HIGH){
+      Serial.println("button3_on");
+    }
+    if(current3 == HIGH && previous3 == LOW){
+      Serial.println("button3_off");
+    }
+    previous3 =current3;
+     //button 4 
+    current4 = digitalRead(button4pin);
+    if(current4 == LOW && previous4 == HIGH){
+      Serial.println("button4_on");
+    }
+    if(current4 == HIGH && previous4 == LOW){
+      Serial.println("button4_off");
+    }
+    previous4 =current4;
     sevseg.refreshDisplay(); // Must run repeatedly
 }
