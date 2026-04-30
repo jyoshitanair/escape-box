@@ -1,0 +1,31 @@
+const int flamePin = 8; // Pin connected to flame sensor's PIN1
+const int ledPin = 13; // LED pin
+
+
+
+
+void setup() {
+ pinMode(flamePin, INPUT);
+ pinMode(ledPin, OUTPUT);
+ Serial.begin(9600); // initialize serial communication
+}
+
+
+
+
+void loop() {
+  int flameDetected = digitalRead(flamePin); // read flame senor output
+  Serial.println(flameDetected);
+  if(flameDetected == LOW) {// Low indicates flame detected)
+    Serial.println("flame detected!");
+    digitalWrite(ledPin, HIGH); // turn on the LED
+   } else{
+      Serial.println("No flame detected.");
+      digitalWrite(ledPin, LOW); // turn off LED
+   }
+    delay(500); // delay for stability
+
+
+
+
+}
