@@ -1,5 +1,11 @@
 #include "SevSeg.h"
 SevSeg sevseg;
+//values
+int button1value = 0; 
+int button2value = 0;
+int button3value = 0;
+int button4value = 0;
+//pins
 int button1pin = A1;
 int button2pin = A0;
 int button3pin = A5;
@@ -7,15 +13,25 @@ int button4pin = A4;
 //button1
 static bool previous1 = HIGH;
 static bool current1 = HIGH;
+unsigned long lastClickTime1;
+bool canBe1 = false;
 //button2
 static bool previous2 = HIGH;
 static bool current2 = HIGH;
+unsigned long lastClickTime2;
+bool canBe2 = false;
 //button3
 static bool previous3 = HIGH;
 static bool current3 = HIGH;
+unsigned long lastClickTime3;
+bool canBe3 = false;
 //button4
 static bool previous4 = HIGH;
 static bool current4 = HIGH;
+unsigned long lastClickTime4;
+bool canBe4 = false;
+
+int finalValue = 0000; 
  //Initiate a seven segment controller object
 //can not use 0 and 1 pins
 
@@ -34,45 +50,81 @@ void setup() {
     // set variable to 1 if you want to use 8 resistors on the segment pins.
     sevseg.begin(COMMON_CATHODE, numDigits, digitPins, segmentPins, resistorsOnSegments);
     sevseg.setBrightness(90);
-    sevseg.setNumber(2222, 4);
-    Serial.begin(9600);
+    sevseg.setNumber(0000, 4);
 }
 void loop() {
+    //check
+    if (finalValue==8888){
+      Serial.println("YOU WIN");
+    }
+    finalValue = (button1value*1000) + (button2value *100) + (button3value *10) +button4value;
+    sevseg.setNumber(finalValue, 4);
     //button 1 
     current1 = digitalRead(button1pin);
     if(current1 == LOW && previous1 == HIGH){
-      Serial.println("button1_on");
+      
+      if (button1value != 9){
+        button1value += 1; 
+      }else{
+        button1value = 0; 
+      }
     }
     if(current1 == HIGH && previous1 == LOW){
-      Serial.println("button1_off");
+  
+      lastClickTime1 = millis();
     }
     previous1 =current1;
      //button 2 
     current2 = digitalRead(button2pin);
     if(current2 == LOW && previous2 == HIGH){
-      Serial.println("button2_on");
+      if (button2value != 9){
+        button2value += 1; 
+      }else{
+        button2value = 0; 
+      }
     }
     if(current2 == HIGH && previous2 == LOW){
-      Serial.println("button2_off");
+      lastClickTime2 = millis();
     }
     previous2 =current2;
      //button 3 
     current3 = digitalRead(button3pin);
     if(current3 == LOW && previous3 == HIGH){
-      Serial.println("button3_on");
+      if (button3value != 9){
+        button3value += 1; 
+      }else{
+        button3value = 0; 
+      }
     }
     if(current3 == HIGH && previous3 == LOW){
-      Serial.println("button3_off");
+      lastClickTime3 = millis();
     }
     previous3 =current3;
      //button 4 
     current4 = digitalRead(button4pin);
     if(current4 == LOW && previous4 == HIGH){
-      Serial.println("button4_on");
+      if (button4value != 9){
+        button4value += 1; 
+      }else{
+        button4value = 0; 
+      }
     }
     if(current4 == HIGH && previous4 == LOW){
-      Serial.println("button4_off");
+      lastClickTime4 = millis();
     }
     previous4 =current4;
     sevseg.refreshDisplay(); // Must run repeatedly
+    //checking millis
+    if ((millis() - lastClickTime1) >50){
+      canBe1 = true;
+    }
+    if ((millis() - lastClickTime2) >50){
+      canBe2 = true;
+    }
+    if ((millis() - lastClickTime3) >50){
+      canBe3 = true;
+    }
+    if ((millis() - lastClickTime4) >50){
+      canBe4 = true;
+    }
 }
