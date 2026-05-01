@@ -6,6 +6,7 @@ int button2value = 0;
 int button3value = 0;
 int button4value = 0;
 //pins
+int ledpin = A2;
 int button1pin = A1;
 int button2pin = A0;
 int button3pin = A5;
@@ -41,6 +42,7 @@ void setup() {
     pinMode(button2pin,INPUT_PULLUP);
     pinMode(button3pin,INPUT_PULLUP);
     pinMode(button4pin,INPUT_PULLUP);
+    pinMode(ledpin, OUTPUT);
     Serial.begin(9600);
     byte numDigits = 4;  
     byte digitPins[] = {2, 3, 4, 5};
@@ -56,6 +58,7 @@ void loop() {
     //check
     if (finalValue==8888){
       Serial.println("YOU WIN");
+      digitalWrite(ledpin, HIGH);
     }
     finalValue = (button1value*1000) + (button2value *100) + (button3value *10) +button4value;
     sevseg.setNumber(finalValue, 4);
@@ -115,16 +118,16 @@ void loop() {
     previous4 =current4;
     sevseg.refreshDisplay(); // Must run repeatedly
     //checking millis
-    if ((millis() - lastClickTime1) >50){
+    if ((millis() - lastClickTime1) >70){
       canBe1 = true;
     }
-    if ((millis() - lastClickTime2) >50){
+    if ((millis() - lastClickTime2) >70){
       canBe2 = true;
     }
-    if ((millis() - lastClickTime3) >50){
+    if ((millis() - lastClickTime3) >70){
       canBe3 = true;
     }
-    if ((millis() - lastClickTime4) >50){
+    if ((millis() - lastClickTime4) >70){
       canBe4 = true;
     }
 }
