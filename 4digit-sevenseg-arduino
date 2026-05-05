@@ -1,11 +1,14 @@
 #include "SevSeg.h"
+#include <Servo.h>
 SevSeg sevseg;
+Servo myServo;
 //values
 int button1value = 0; 
 int button2value = 0;
 int button3value = 0;
 int button4value = 0;
 //pins
+int servopin = A3; 
 int ledpin = A2;
 int button1pin = A1;
 int button2pin = A0;
@@ -31,7 +34,8 @@ static bool previous4 = HIGH;
 static bool current4 = HIGH;
 unsigned long lastClickTime4;
 bool canBe4 = false;
-
+bool done = false; 
+bool canChange = true;
 int finalValue = 0000; 
  //Initiate a seven segment controller object
 //can not use 0 and 1 pins
@@ -43,6 +47,7 @@ void setup() {
     pinMode(button3pin,INPUT_PULLUP);
     pinMode(button4pin,INPUT_PULLUP);
     pinMode(ledpin, OUTPUT);
+    myServo.attach(servopin);
     Serial.begin(9600);
     byte numDigits = 4;  
     byte digitPins[] = {2, 3, 4, 5};
@@ -53,81 +58,88 @@ void setup() {
     sevseg.begin(COMMON_CATHODE, numDigits, digitPins, segmentPins, resistorsOnSegments);
     sevseg.setBrightness(90);
     sevseg.setNumber(0000, 4);
+    myServo.write(90);
 }
 void loop() {
     //check
-    if (finalValue==8888){
+    finalValue = (button1value*1000) + (button2value *100) + (button3value *10) +button4value;
+    if (finalValue==8888 && !done){
       Serial.println("YOU WIN");
       digitalWrite(ledpin, HIGH);
+      //servo stuff
+      myServo.write(270);
+      done = true;
+      canChange = false;
     }
-    finalValue = (button1value*1000) + (button2value *100) + (button3value *10) +button4value;
     sevseg.setNumber(finalValue, 4);
-    //button 1 
-    current1 = digitalRead(button1pin);
-    if(current1 == LOW && previous1 == HIGH){
-      
-      if (button1value != 9){
-        button1value += 1; 
-      }else{
-        button1value = 0; 
+    if (canChange){
+      //button 1 
+      current1 = digitalRead(button1pin);
+      if(current1 == LOW && previous1 == HIGH){
+        
+        if (button1value != 9){
+          button1value += 1; 
+        }else{
+          button1value = 0; 
+        }
       }
-    }
-    if(current1 == HIGH && previous1 == LOW){
-  
-      lastClickTime1 = millis();
-    }
-    previous1 =current1;
-     //button 2 
-    current2 = digitalRead(button2pin);
-    if(current2 == LOW && previous2 == HIGH){
-      if (button2value != 9){
-        button2value += 1; 
-      }else{
-        button2value = 0; 
+      if(current1 == HIGH && previous1 == LOW){
+    
+        lastClickTime1 = millis();
       }
-    }
-    if(current2 == HIGH && previous2 == LOW){
-      lastClickTime2 = millis();
-    }
-    previous2 =current2;
-     //button 3 
-    current3 = digitalRead(button3pin);
-    if(current3 == LOW && previous3 == HIGH){
-      if (button3value != 9){
-        button3value += 1; 
-      }else{
-        button3value = 0; 
+      previous1 =current1;
+      //button 2 
+      current2 = digitalRead(button2pin);
+      if(current2 == LOW && previous2 == HIGH){
+        if (button2value != 9){
+          button2value += 1; 
+        }else{
+          button2value = 0; 
+        }
       }
-    }
-    if(current3 == HIGH && previous3 == LOW){
-      lastClickTime3 = millis();
-    }
-    previous3 =current3;
-     //button 4 
-    current4 = digitalRead(button4pin);
-    if(current4 == LOW && previous4 == HIGH){
-      if (button4value != 9){
-        button4value += 1; 
-      }else{
-        button4value = 0; 
+      if(current2 == HIGH && previous2 == LOW){
+        lastClickTime2 = millis();
       }
-    }
-    if(current4 == HIGH && previous4 == LOW){
-      lastClickTime4 = millis();
-    }
-    previous4 =current4;
-    sevseg.refreshDisplay(); // Must run repeatedly
-    //checking millis
-    if ((millis() - lastClickTime1) >70){
-      canBe1 = true;
-    }
-    if ((millis() - lastClickTime2) >70){
-      canBe2 = true;
-    }
-    if ((millis() - lastClickTime3) >70){
-      canBe3 = true;
-    }
-    if ((millis() - lastClickTime4) >70){
-      canBe4 = true;
+      previous2 =current2;
+      //button 3 
+      current3 = digitalRead(button3pin);
+      if(current3 == LOW && previous3 == HIGH){
+        if (button3value != 9){
+          button3value += 1; 
+        }else{
+          button3value = 0; 
+        }
+      }
+      if(current3 == HIGH && previous3 == LOW){
+        lastClickTime3 = millis();
+      }
+      previous3 =current3;
+      //button 4 
+      current4 = digitalRead(button4pin);
+      if(current4 == LOW && previous4 == HIGH){
+        if (button4value != 9){
+          button4value += 1; 
+        }else{
+          button4value = 0; 
+        }
+      }
+      if(current4 == HIGH && previous4 == LOW){
+        lastClickTime4 = millis();
+      }
+      previous4 =current4;
+      sevseg.refreshDisplay(); // Must run repeatedly
+      //checking millis
+      if ((millis() - lastClickTime1) >70){
+        canBe1 = true;
+      }
+      if ((millis() - lastClickTime2) >70){
+        canBe2 = true;
+      }
+      if ((millis() - lastClickTime3) >70){
+        canBe3 = true;
+      }
+      if ((millis() - lastClickTime4) >70){
+        canBe4 = true;
+      }
     }
 }
