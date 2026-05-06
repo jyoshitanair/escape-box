@@ -58,7 +58,7 @@ void setup() {
     sevseg.begin(COMMON_CATHODE, numDigits, digitPins, segmentPins, resistorsOnSegments);
     sevseg.setBrightness(90);
     sevseg.setNumber(0000, 4);
-    myServo.write(90);
+    myServo.write(0);
 }
 void loop() {
     //check
@@ -67,7 +67,7 @@ void loop() {
       Serial.println("YOU WIN");
       digitalWrite(ledpin, HIGH);
       //servo stuff
-      myServo.write(270);
+      myServo.write(180);
       done = true;
       canChange = false;
     }
