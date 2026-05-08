@@ -1,122 +1,22 @@
-#include <LiquidCrystal.h>
-const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
-//values
-int button1value = 0;
-int button2value = 0;
-int button3value = 0;
-int button4value = 0;
-//pins
-int ledPin = 6;
-int button1pin = 8;
-int button2pin = 9;
-int button3pin = 10;
-//button1
-static bool previous1 = HIGH;
-static bool current1 = HIGH;
-unsigned long lastClickTime1;
-bool canBe1 = false;
-//button2
-static bool previous2 = HIGH;
-static bool current2 = HIGH;
-unsigned long lastClickTime2;
-bool canBe2 = false;
-//button3
-static bool previous3 = HIGH;
-static bool current3 = HIGH;
-unsigned long lastClickTime3;
-bool canBe3 = false;
-
-bool done = false;
-bool canChange = true;
-int finalValue = 0000;
-//can not use 0 and 1 pins
-
+const int flamePin = 8; // Pin connected to flame sensor's PIN1
+const int ledPin = 13; // LED pin
 
 void setup() {
-  // set up the LCD's number of columns and rows:
-  lcd.begin(16, 2);
-  // Print a message to the LCD.
-  lcd.print("Cook the Vegimal");
-  lcd.setCursor(0, 1);
-  lcd.print("000");
-  //pins
-  pinMode(button1pin,INPUT_PULLUP);
-  pinMode(button2pin,INPUT_PULLUP);
-  pinMode(button3pin,INPUT_PULLUP);  
-  pinMode(ledPin, OUTPUT);
-  Serial.begin(9600);
+ pinMode(flamePin, INPUT);
+ pinMode(ledPin, OUTPUT);
 }
 
 
 void loop() {
-  Serial.print(button1value);
-  Serial.print(button2value);
-  Serial.println(button3value);
-    if (button1value == 3 && button2value ==2 && button3value == 6 && !done){
-      Serial.println("YOU WIN");
-      digitalWrite(ledPin,HIGH);
-      done = true;
-    }
-    lcd.setCursor(0, 1);
-    lcd.print(button1value);
-    lcd.setCursor(1, 1);
-    lcd.print(button2value);
-    lcd.setCursor(2, 1);
-    lcd.print(button3value);
-    lcd.setCursor(3, 1);
-    if (canChange){
-      //button 1
-      current1 = digitalRead(button1pin);
-      if(current1 == LOW && previous1 == HIGH){
-       
-        if (button1value != 9){
-          button1value += 1;
-        }else{
-          button1value = 0;
-        }
-      }
-      if(current1 == HIGH && previous1 == LOW){
-   
-        lastClickTime1 = millis();
-      }
-      previous1 =current1;
-      //button 2
-      current2 = digitalRead(button2pin);
-      if(current2 == LOW && previous2 == HIGH){
-        if (button2value != 9){
-          button2value += 1;
-        }else{
-          button2value = 0;
-        }
-      }
-      if(current2 == HIGH && previous2 == LOW){
-        lastClickTime2 = millis();
-      }
-      previous2 =current2;
-      //button 3
-      current3 = digitalRead(button3pin);
-      if(current3 == LOW && previous3 == HIGH){
-        if (button3value != 9){
-          button3value += 1;
-        }else{
-          button3value = 0;
-        }
-      }
-      if(current3 == HIGH && previous3 == LOW){
-        lastClickTime3 = millis();
-      }
-      previous3 =current3;
-     
-      //checking millis
-      if ((millis() - lastClickTime1) >70){
-        canBe1 = true;
-      }
-      if ((millis() - lastClickTime2) >70){
-        canBe2 = true;
-      }
-      if ((millis() - lastClickTime3) >70){
-        canBe3 = true;
-      }
-}
+  int flameDetected = digitalRead(flamePin); // read flame senor output
+  if(flameDetected == LOW) {// Low indicates flame detected)
+    digitalWrite(ledPin, HIGH); // turn on the LED
+   } else{
+      digitalWrite(ledPin, LOW); // turn off LED
+   }
+    delay(500); // delay for stability
+
+
+
+
 }
