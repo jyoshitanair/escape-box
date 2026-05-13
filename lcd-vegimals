@@ -45,16 +45,11 @@ void setup() {
   pinMode(button2pin,INPUT_PULLUP);
   pinMode(button3pin,INPUT_PULLUP);  
   pinMode(ledPin, OUTPUT);
-  Serial.begin(9600);
 }
 
 
 void loop() {
-  Serial.print(button1value);
-  Serial.print(button2value);
-  Serial.println(button3value);
     if (button1value == 3 && button2value ==2 && button3value == 6 && !done){
-      Serial.println("YOU WIN");
       digitalWrite(ledPin,HIGH);
       done = true;
     }
