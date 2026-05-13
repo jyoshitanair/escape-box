@@ -1,16 +1,19 @@
-#include <LiquidCrystal.h>
-const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+#include "SevSeg.h"
+#include <Servo.h>
+SevSeg sevseg;
+Servo myServo;
 //values
-int button1value = 0;
+int button1value = 0; 
 int button2value = 0;
 int button3value = 0;
 int button4value = 0;
 //pins
-int ledPin = 6;
-int button1pin = 8;
-int button2pin = 9;
-int button3pin = 10;
+int servopin = A3; 
+int ledpin = A2;
+int button1pin = A1;
+int button2pin = A0;
+int button3pin = A5;
+int button4pin = A4;
 //button1
 static bool previous1 = HIGH;
 static bool current1 = HIGH;
@@ -26,83 +29,105 @@ static bool previous3 = HIGH;
 static bool current3 = HIGH;
 unsigned long lastClickTime3;
 bool canBe3 = false;
-
-bool done = false;
+//button4
+static bool previous4 = HIGH;
+static bool current4 = HIGH;
+unsigned long lastClickTime4;
+bool canBe4 = false;
+bool done = false; 
 bool canChange = true;
-int finalValue = 0000;
+int finalValue = 0000; 
+ //Initiate a seven segment controller object
 //can not use 0 and 1 pins
 
-
 void setup() {
-  // set up the LCD's number of columns and rows:
-  lcd.begin(16, 2);
-  // Print a message to the LCD.
-  lcd.print("Cook the Vegimal");
-  lcd.setCursor(0, 1);
-  lcd.print("000");
-  //pins
-  pinMode(button1pin,INPUT_PULLUP);
-  pinMode(button2pin,INPUT_PULLUP);
-  pinMode(button3pin,INPUT_PULLUP);  
-  pinMode(ledPin, OUTPUT);
+    //buttons 
+    pinMode(button1pin,INPUT_PULLUP);
+    pinMode(button2pin,INPUT_PULLUP);
+    pinMode(button3pin,INPUT_PULLUP);
+    pinMode(button4pin,INPUT_PULLUP);
+    pinMode(ledpin, OUTPUT);
+    myServo.attach(servopin);
+    Serial.begin(9600);
+    byte numDigits = 4;  
+    byte digitPins[] = {2, 3, 4, 5};
+    byte segmentPins[] = {6, 7, 8, 9, 10, 12, 11, 13};
+    bool resistorsOnSegments = 0; 
+    // variable above indicates that 4 resistors were placed on the digit pins.
+    // set variable to 1 if you want to use 8 resistors on the segment pins.
+    sevseg.begin(COMMON_CATHODE, numDigits, digitPins, segmentPins, resistorsOnSegments);
+    sevseg.setBrightness(90);
+    sevseg.setNumber(0000, 4);
+    myServo.write(0);
 }
-
-
 void loop() {
-    if (button1value == 3 && button2value ==2 && button3value == 6 && !done){
-      digitalWrite(ledPin,HIGH);
+    //check
+    finalValue = (button1value*1000) + (button2value *100) + (button3value *10) +button4value;
+    if (finalValue==8888 && !done){
+      Serial.println("YOU WIN");
+      digitalWrite(ledpin, HIGH);
+      //servo stuff
+      myServo.write(180);
       done = true;
+      canChange = false;
     }
-    lcd.setCursor(0, 1);
-    lcd.print(button1value);
-    lcd.setCursor(1, 1);
-    lcd.print(button2value);
-    lcd.setCursor(2, 1);
-    lcd.print(button3value);
-    lcd.setCursor(3, 1);
+    sevseg.setNumber(finalValue, 4);
     if (canChange){
-      //button 1
+      //button 1 
       current1 = digitalRead(button1pin);
       if(current1 == LOW && previous1 == HIGH){
-       
+        
         if (button1value != 9){
-          button1value += 1;
+          button1value += 1; 
         }else{
-          button1value = 0;
+          button1value = 0; 
         }
       }
       if(current1 == HIGH && previous1 == LOW){
-   
+    
         lastClickTime1 = millis();
       }
       previous1 =current1;
-      //button 2
+      //button 2 
       current2 = digitalRead(button2pin);
       if(current2 == LOW && previous2 == HIGH){
         if (button2value != 9){
-          button2value += 1;
+          button2value += 1; 
         }else{
-          button2value = 0;
+          button2value = 0; 
         }
       }
       if(current2 == HIGH && previous2 == LOW){
         lastClickTime2 = millis();
       }
       previous2 =current2;
-      //button 3
+      //button 3 
       current3 = digitalRead(button3pin);
       if(current3 == LOW && previous3 == HIGH){
         if (button3value != 9){
-          button3value += 1;
+          button3value += 1; 
         }else{
-          button3value = 0;
+          button3value = 0; 
         }
       }
       if(current3 == HIGH && previous3 == LOW){
         lastClickTime3 = millis();
       }
       previous3 =current3;
-     
+      //button 4 
+      current4 = digitalRead(button4pin);
+      if(current4 == LOW && previous4 == HIGH){
+        if (button4value != 9){
+          button4value += 1; 
+        }else{
+          button4value = 0; 
+        }
+      }
+      if(current4 == HIGH && previous4 == LOW){
+        lastClickTime4 = millis();
+      }
+      previous4 =current4;
+      sevseg.refreshDisplay(); // Must run repeatedly
       //checking millis
       if ((millis() - lastClickTime1) >70){
         canBe1 = true;
@@ -113,5 +138,8 @@ void loop() {
       if ((millis() - lastClickTime3) >70){
         canBe3 = true;
       }
-}
+      if ((millis() - lastClickTime4) >70){
+        canBe4 = true;
+      }
+    }
 }
