@@ -10,10 +10,10 @@ int button4value = 0;
 //pins
 int servopin = A3; 
 int ledpin = A2;
-int button1pin = A1;
-int button2pin = A0;
-int button3pin = A5;
-int button4pin = A4;
+int button1pin = A4;
+int button2pin = A5;
+int button3pin = A0;
+int button4pin = A1;
 //button1
 static bool previous1 = HIGH;
 static bool current1 = HIGH;
@@ -48,7 +48,6 @@ void setup() {
     pinMode(button4pin,INPUT_PULLUP);
     pinMode(ledpin, OUTPUT);
     myServo.attach(servopin);
-    Serial.begin(9600);
     byte numDigits = 4;  
     byte digitPins[] = {2, 3, 4, 5};
     byte segmentPins[] = {6, 7, 8, 9, 10, 12, 11, 13};
@@ -129,16 +128,16 @@ void loop() {
       previous4 =current4;
       sevseg.refreshDisplay(); // Must run repeatedly
       //checking millis
-      if ((millis() - lastClickTime1) >70){
+      if ((millis() - lastClickTime1) >100){
         canBe1 = true;
       }
-      if ((millis() - lastClickTime2) >70){
+      if ((millis() - lastClickTime2) >100){
         canBe2 = true;
       }
-      if ((millis() - lastClickTime3) >70){
+      if ((millis() - lastClickTime3) >100){
         canBe3 = true;
       }
-      if ((millis() - lastClickTime4) >70){
+      if ((millis() - lastClickTime4) >100){
         canBe4 = true;
       }
     }
