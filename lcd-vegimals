@@ -61,57 +61,38 @@ void loop() {
     lcd.print(button3value);
     lcd.setCursor(3, 1);
     if (canChange){
-      //button 1
+      //button 1 
       current1 = digitalRead(button1pin);
-      if(current1 == LOW && previous1 == HIGH){
-       
-        if (button1value != 9){
-          button1value += 1;
-        }else{
-          button1value = 0;
-        }
-      }
-      if(current1 == HIGH && previous1 == LOW){
-   
+      if(current1 == LOW && previous1 == HIGH && millis() -lastClickTime1 > 50){
         lastClickTime1 = millis();
+        if (button1value != 9){
+          button1value += 1; 
+        }else{
+          button1value = 0; 
+        }
       }
       previous1 =current1;
-      //button 2
+      //button 2 
       current2 = digitalRead(button2pin);
-      if(current2 == LOW && previous2 == HIGH){
-        if (button2value != 9){
-          button2value += 1;
-        }else{
-          button2value = 0;
-        }
-      }
-      if(current2 == HIGH && previous2 == LOW){
+      if(current2 == LOW && previous2 == HIGH && millis() -lastClickTime2 > 50){
         lastClickTime2 = millis();
+        if (button2value != 9){
+          button2value += 1; 
+        }else{
+          button2value = 0; 
+        }
       }
       previous2 =current2;
-      //button 3
+      //button 3 
       current3 = digitalRead(button3pin);
-      if(current3 == LOW && previous3 == HIGH){
+      if(current3 == LOW && previous3 == HIGH && millis() -lastClickTime3 > 50){
+        lastClickTime3 = millis();
         if (button3value != 9){
-          button3value += 1;
+          button3value += 1; 
         }else{
-          button3value = 0;
+          button3value = 0; 
         }
       }
-      if(current3 == HIGH && previous3 == LOW){
-        lastClickTime3 = millis();
-      }
       previous3 =current3;
-     
-      //checking millis
-      if ((millis() - lastClickTime1) >70){
-        canBe1 = true;
-      }
-      if ((millis() - lastClickTime2) >70){
-        canBe2 = true;
-      }
-      if ((millis() - lastClickTime3) >70){
-        canBe3 = true;
-      }
 }
 }
