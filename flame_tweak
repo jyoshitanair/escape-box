@@ -2,27 +2,23 @@
 Servo myservo;
 const int flamePin = 8; // Pin connected to flame sensor's PIN1
 const int ledPin = 13; // LED pin
-const int servoPin = 9; // LED pin
-const int combinedpin = 4;
-
+bool stop_checking = false; 
 void setup() {
- myservo.attach(servoPin);
- myservo.write(0);
  pinMode(flamePin, INPUT);
  pinMode(ledPin, OUTPUT);
- pinMode(combinedpin, INPUT);
 }
 
 
 void loop() {
-  if (digitalRead(combinedpin) == HIGH){
-    myservo.write(180);
-  }
   int flameDetected = digitalRead(flamePin); // read flame senor output
-  if(flameDetected == LOW) {// Low indicates flame detected)
+  if (!stop_checking){
+    if(flameDetected == LOW) {// Low indicates flame detected)
+      stop_checking = true;
+    } else{
+        digitalWrite(ledPin, LOW); // turn off LED
+    }
+      delay(500); // delay for stability
+  }else{
     digitalWrite(ledPin, HIGH); // turn on the LED
-   } else{
-      digitalWrite(ledPin, LOW); // turn off LED
-   }
-    delay(500); // delay for stability
+  }
 }
