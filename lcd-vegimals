@@ -29,7 +29,6 @@ bool canBe3 = false;
 
 bool done = false;
 bool canChange = true;
-int finalValue = 0000;
 //can not use 0 and 1 pins
 
 
@@ -49,7 +48,7 @@ void setup() {
 
 
 void loop() {
-    if (button1value == 3 && button2value ==2 && button3value == 6 && !done){
+    if (button1value == 3 && button2value ==1 && button3value == 7 && !done){
       digitalWrite(ledPin,HIGH);
       done = true;
     }
